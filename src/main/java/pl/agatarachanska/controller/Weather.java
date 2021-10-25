@@ -89,6 +89,7 @@ public class Weather implements Initializable {
                     change.setDisable(true);
                 }
             } else {
+                window.setStyle("-fx-background-image: url(" + ImagesTool.getBackground("default") + ");");
                 showInfo(resourceBundle.getString("brakInternetu"));
             }
         } else {
@@ -297,6 +298,7 @@ public class Weather implements Initializable {
             showForecastDataAndDescription(tomorrow1, tomorrowDescription1, dayAfter1, dayAfterDescription1, dayDayAfter1, dayDayAfterDescription1, dayDayDayAfter1, dayDayDayAfterDescription1);
             setImageFromMyLocation();
         }
+
     }
 
     private void setTemperatureDescriptionPressureAndCityInMainMyRegion() {
@@ -323,6 +325,7 @@ public class Weather implements Initializable {
         img7.setImage(new Image(ImagesTool.getImage(weatherTool.getIconB())));
         img8.setImage(new Image(ImagesTool.getImage(weatherTool.getIconC())));
         img9.setImage(new Image(ImagesTool.getImage(weatherTool.getIconD())));
+        System.out.println(weatherTool.getIcon0());
         window.setStyle("-fx-background-image: url(" + ImagesTool.getBackground(weatherTool.getIcon0()) + ");");
     }
 }

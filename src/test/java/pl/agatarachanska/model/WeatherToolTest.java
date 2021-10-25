@@ -95,4 +95,51 @@ class WeatherToolTest {
         assertTrue(result);
     }
 
+    @Test
+    void throwExceptionWhenCityNameInYourRegionIsNull() {
+        //given
+        ResourceBundle bundle = ResourceBundle.getBundle("bundles.message");
+        WeatherTool weatherTool = new WeatherTool(null, bundle);
+        //when
+        //then
+        assertThrows(NullPointerException.class, () -> weatherTool.weatherInTheSelectedCity());
+
+    }
+
+    @Test
+    void throwExceptionWhenCityNameInYourRegionIsEmpty() {
+        //given
+        ResourceBundle bundle = ResourceBundle.getBundle("bundles.message");
+        WeatherTool weatherTool = new WeatherTool("",bundle);
+        //when
+        //then
+        assertThrows(IllegalArgumentException.class, () -> weatherTool.weatherInTheSelectedCity());
+
+    }
+
+    @Test
+    void downloadDataWeatherInTheSelectedCity() {
+        //given
+        ResourceBundle bundle = ResourceBundle.getBundle("bundles.message");
+        WeatherTool weatherTool = new WeatherTool("Kraków", bundle);
+        WeatherTool weatherToolSpy = spy(weatherTool);
+        given(weatherToolSpy.weatherInTheSelectedCity()).willReturn(true);
+        //when
+        //then
+        assertTrue(weatherToolSpy.weatherInTheSelectedCity());
+    }
+
+    @Test
+    void unexpectErrorWhenDownloadDataWeatherInTheSelectedCity() {
+        //given
+        ResourceBundle bundle = ResourceBundle.getBundle("bundles.message");
+        WeatherTool weatherTool = new WeatherTool("Kraków", bundle);
+        WeatherTool weatherToolSpy = spy(weatherTool);
+        given(weatherToolSpy.weatherInTheSelectedCity()).willReturn(false);
+        weatherToolSpy.setUnexpectError();
+        //when
+        //then
+        assertTrue(weatherToolSpy.getUnexpectError());
+    }
+
 }
