@@ -8,4 +8,5 @@ module pl.agatarachanska {
     exports pl.agatarachanska;
     exports pl.agatarachanska.controller;
     opens pl.agatarachanska.controller to javafx.fxml;
+    opens pl.agatarachanska.model;
 }

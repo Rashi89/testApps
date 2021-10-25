@@ -20,8 +20,8 @@ public class WeatherTool {
     private static final String TIME_FORMAT = "HH:mm:ss";
     private static final String TIME_WEATHER = "06:00:00";
     private static final Integer NEXT_DAY = 8;
-    private final String language;
-    private final ResourceBundle resourceBundle;
+    private String language;
+    private ResourceBundle resourceBundle;
     public String temp;
     public String sym;
     public String descript;
@@ -56,6 +56,9 @@ public class WeatherTool {
     private boolean connectionIsOpen;
     private boolean unexpectError = false;
 
+    public WeatherTool() {
+    }
+
     public WeatherTool(String city, ResourceBundle resourceBundle) {
         this.city = city;
         this.resourceBundle = resourceBundle;
@@ -63,22 +66,31 @@ public class WeatherTool {
         this.language = currentLocale.getLanguage();
     }
 
-    public void fetchLocalApi() {
+    public boolean fetchLocalApi() {
         try {
             local = new URL("http://ip-api.com/xml").openConnection().getInputStream();
             this.connectionIsOpen = true;
+            return true;
         } catch (UnknownHostException | MalformedURLException e) {
             this.connectionIsOpen = false;
+            return false;
         } catch (IOException e) {
             this.unexpectError = true;
+            return false;
         }
     }
 
-    public void weatherInYourRegion() {
-        downloadDataFromApi();
-        String api = "http://api.openweathermap.org/data/2.5/forecast?lat=" + latitude + "&lon=" + longitude +
-                "&units=metric&mode=xml&lang=" + language + "&appid=a539a1d5b32e2518dfe9ca8abf12434c";
-        downloadDataWeatherFromAPI(api);
+    public boolean weatherInYourRegion() {
+        try {
+            downloadDataFromApi();
+            String api = "http://api.openweathermap.org/data/2.5/forecast?lat=" + latitude + "&lon=" + longitude +
+                    "&units=metric&mode=xml&lang=" + language + "&appid=a539a1d5b32e2518dfe9ca8abf12434c";
+            downloadDataWeatherFromAPI(api);
+            return true;
+        } catch (Exception e){
+            this.unexpectError = true;
+            return false;
+        }
     }
 
     public void weatherInTheSelectedCity() {
@@ -91,32 +103,36 @@ public class WeatherTool {
     private void downloadDataFromApi() {
         XMLInputFactory inputFactory =
                 XMLInputFactory.newInstance();
-        fetchLocalApi();
-        try {
-            XMLStreamReader reader =
-                    inputFactory.createXMLStreamReader(local);
-            reader.next();
-            while (reader.hasNext()) {
-                int eventType = reader.getEventType();
-                if (eventType == XMLStreamReader.START_ELEMENT) {
-                    String el = reader.getLocalName();
-                    if (el.equals("city")) {
-                        city = reader.getElementText();
-                    }
-                    if (el.equals("lat")) {
-                        latitude = reader.getElementText();
-                    }
-                    if (el.equals("lon")) {
-                        longitude = reader.getElementText();
-                    }
-                }
+        if(fetchLocalApi()) {
+            try {
+                XMLStreamReader reader =
+                        inputFactory.createXMLStreamReader(local);
                 reader.next();
+                while (reader.hasNext()) {
+                    int eventType = reader.getEventType();
+                    if (eventType == XMLStreamReader.START_ELEMENT) {
+                        String el = reader.getLocalName();
+                        if (el.equals("city")) {
+                            city = reader.getElementText();
+                        }
+                        if (el.equals("lat")) {
+                            latitude = reader.getElementText();
+                        }
+                        if (el.equals("lon")) {
+                            longitude = reader.getElementText();
+                        }
+                    }
+                    reader.next();
+                }
+                reader.close();
+
+            } catch (XMLStreamException e) {
+                this.unexpectError = true;
+
+            } catch (Exception e) {
+                this.unexpectError = true;
+
             }
-            reader.close();
-        } catch (XMLStreamException e) {
-            this.unexpectError = true;
-        } catch (Exception e) {
-            this.unexpectError = true;
         }
     }
 
@@ -388,5 +404,13 @@ public class WeatherTool {
 
     public boolean getUnexpectError() {
         return unexpectError;
+    }
+
+    public void setConnectionIsOpen() {
+        this.connectionIsOpen = fetchLocalApi();
+    }
+
+    public void setUnexpectError(){
+        this.unexpectError = true;
     }
 }
