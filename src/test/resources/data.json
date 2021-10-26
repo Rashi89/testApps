@@ -1,0 +1,6 @@
+{"coord":{"lon":23,"lat":51},"weather":[{"id":804,"main":"Clouds","description":"zachmurzenie duże","icon":"04d"}],
+  "base":"stations","main":{"temp":11.77,"feels_like":10.15,"temp_min":11.77,"temp_max":11.77,
+  "pressure":1022,"humidity":44,"sea_level":1022,"grnd_level":994},"visibility":10000,
+  "wind":{"speed":3.07,"deg":238,"gust":3.6},"clouds":{"all":99},"dt":1635251086,
+  "sys":{"type":1,"id":1702,"country":"PL","sunrise":1635224983,"sunset":1635261237},
+  "timezone":7200,"id":858785,"name":"Województwo lubelskie","cod":200}

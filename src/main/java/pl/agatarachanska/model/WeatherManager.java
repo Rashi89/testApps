@@ -26,6 +26,7 @@ public class WeatherManager {
     private String moisture;
     private ResourceBundle resourceBundle;
     private String language;
+    private String apiAdress;
     private boolean unexpectErrors = false;
 
     private static final String KEY_API = "a539a1d5b32e2518dfe9ca8abf12434c";
@@ -58,9 +59,11 @@ public class WeatherManager {
 
         JSONObject json;
         JSONObject jsonDetails;
-
+        String api = "http://api.openweathermap.org/data/2.5/weather?q=" + URLEncoder.encode(city, StandardCharsets.UTF_8) + "&appid=" + KEY_API + "&lang=" + language + "&units=metric";
         try {
-            json = readJsonFromURL("http://api.openweathermap.org/data/2.5/weather?q=" + URLEncoder.encode(city, StandardCharsets.UTF_8) + "&appid=" + KEY_API + "&lang=" + language + "&units=metric");
+            setApi(api);
+            apiAdress = getApi();
+            json = readJsonFromURL(apiAdress);
         } catch (JSONException e) {
             unexpectErrors = true;
             return;
@@ -77,35 +80,35 @@ public class WeatherManager {
         jsonDetails = json.getJSONObject("clouds");
         this.cloudy = jsonDetails.get("all").toString();
 
-        LocalDate today = LocalDate.now();
-        DayOfWeek dayOfWeek = DayOfWeek.from(today);
-        String nameDay;
-        nameDay = dayOfWeek.name();
+        //LocalDate today = LocalDate.now();
+        //DayOfWeek dayOfWeek = DayOfWeek.from(today);
+        //String nameDay;
+        //nameDay = dayOfWeek.name();
 
-        this.day = changeDate(nameDay, resourceBundle);
+        //this.day = changeDate(nameDay, resourceBundle);
         jsonDetails = json.getJSONArray("weather").getJSONObject(0);
         this.description = jsonDetails.get("description").toString();
         this.icon = jsonDetails.get("icon").toString();
     }
 
-    public String changeDate(String day, ResourceBundle resourceBundle) {
-        if (day.equals("Monday")) {
-            return resourceBundle.getString("poniedzialek");
-        } else if (day.equals("Tuesday")) {
-            return resourceBundle.getString("wtorek");
-        } else if (day.equals("Wednesday")) {
-            return resourceBundle.getString("sroda");
-        } else if (day.equals("Thursday")) {
-            return resourceBundle.getString("czwartek");
-        } else if (day.equals("Friday")) {
-            return resourceBundle.getString("piatek");
-        } else if (day.equals("Saturday")) {
-            return resourceBundle.getString("sobota");
-        } else if (day.equals("Sunday")) {
-            return resourceBundle.getString("niedziela");
-        }
-        return "";
-    }
+//    public String changeDate(String day, ResourceBundle resourceBundle) {
+//        if (day.equals("Monday")) {
+//            return resourceBundle.getString("poniedzialek");
+//        } else if (day.equals("Tuesday")) {
+//            return resourceBundle.getString("wtorek");
+//        } else if (day.equals("Wednesday")) {
+//            return resourceBundle.getString("sroda");
+//        } else if (day.equals("Thursday")) {
+//            return resourceBundle.getString("czwartek");
+//        } else if (day.equals("Friday")) {
+//            return resourceBundle.getString("piatek");
+//        } else if (day.equals("Saturday")) {
+//            return resourceBundle.getString("sobota");
+//        } else if (day.equals("Sunday")) {
+//            return resourceBundle.getString("niedziela");
+//        }
+//        return "";
+//    }
 
     public String getCity() {
         return city;
@@ -129,5 +132,13 @@ public class WeatherManager {
 
     public boolean getUnexpectErrors() {
         return unexpectErrors;
+    }
+
+    public void setApi(String api) {
+        this.apiAdress = api;
+    }
+
+    public String getApi(){
+        return apiAdress;
     }
 }

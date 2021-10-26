@@ -81,6 +81,12 @@
             <artifactId>stax-api</artifactId>
             <version>1.0-2</version>
         </dependency>
+        <dependency>
+            <groupId>net.javacrumbs.json-unit</groupId>
+            <artifactId>json-unit</artifactId>
+            <version>2.28.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
