@@ -93,11 +93,24 @@ public class WeatherTool {
         }
     }
 
-    public void weatherInTheSelectedCity() {
-        String api = "http://api.openweathermap.org/data/2.5/forecast?q=" + URLEncoder.encode(city, StandardCharsets.UTF_8) +
-                "&units=metric&mode=xml&lang=" + language + "&appid=a539a1d5b32e2518dfe9ca8abf12434c";
+    public boolean weatherInTheSelectedCity() {
+        if(!city.equals(null) && !city.isEmpty()) {
+            try {
+                String api = "http://api.openweathermap.org/data/2.5/forecast?q=" + URLEncoder.encode(city, StandardCharsets.UTF_8) +
+                        "&units=metric&mode=xml&lang=" + language + "&appid=a539a1d5b32e2518dfe9ca8abf12434c";
 
-        downloadDataWeatherFromAPI(api);
+                downloadDataWeatherFromAPI(api);
+                return true;
+            } catch (Exception e) {
+                this.unexpectError = true;
+                return false;
+            }
+        } else if(city.isEmpty()){
+            throw new IllegalArgumentException();
+        }
+        else {
+            throw new NullPointerException();
+        }
     }
 
     private void downloadDataFromApi() {

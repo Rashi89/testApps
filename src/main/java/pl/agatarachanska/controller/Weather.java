@@ -13,6 +13,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import org.json.JSONException;
+import pl.agatarachanska.model.DataName;
 import pl.agatarachanska.model.ImagesTool;
 import pl.agatarachanska.model.WeatherManager;
 import pl.agatarachanska.model.WeatherTool;
@@ -24,11 +25,10 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class Weather implements Initializable {
-    private static final SimpleDateFormat FORMATTER = new SimpleDateFormat("dd-MM-yyyy");
+
     private String citySet;
     private WeatherManager weatherManager;
     private WeatherTool weatherTool;
-    private Date datas;
 
     @FXML
     private AnchorPane window;
@@ -48,6 +48,7 @@ public class Weather implements Initializable {
     @FXML
     private Button change, set, cancel;
     private ResourceBundle resourceBundle;
+    private DataName dataName;
 
 
     @FXML
@@ -76,6 +77,7 @@ public class Weather implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         this.resourceBundle = resourceBundle;
+        dataName = new DataName();
         setMainData(resourceBundle);
         weatherManager = new WeatherManager(citySet, resourceBundle);
         weatherTool = new WeatherTool(citySet, resourceBundle);
@@ -89,6 +91,7 @@ public class Weather implements Initializable {
                     change.setDisable(true);
                 }
             } else {
+                window.setStyle("-fx-background-image: url(" + ImagesTool.getBackground("default") + ");");
                 showInfo(resourceBundle.getString("brakInternetu"));
             }
         } else {
@@ -109,9 +112,7 @@ public class Weather implements Initializable {
     }
 
     private void setMainData(ResourceBundle resourceBundle) {
-        String name = new SimpleDateFormat("EEE", Locale.ENGLISH).format(new Date());
-        String nameDay = setDayNames(name, resourceBundle);
-        day.setText(nameDay);
+        day.setText(dataName.createDayName(resourceBundle));
     }
 
     private void updateButtonsAndTextField(boolean isInEditMode) {
@@ -242,27 +243,6 @@ public class Weather implements Initializable {
         });
     }
 
-    private String setDayNames(String dzisiejszyDzien, ResourceBundle resourceBundle) {
-        datas = new Date();
-        switch (dzisiejszyDzien) {
-            case "Mon":
-                return resourceBundle.getString("poniedzialek") + " " + FORMATTER.format(datas);
-            case "Tue":
-                return resourceBundle.getString("wtorek") + " " + FORMATTER.format(datas);
-            case "Wed":
-                return resourceBundle.getString("sroda") + " " + FORMATTER.format(datas);
-            case "Thu":
-                return resourceBundle.getString("czwartek") + " " + FORMATTER.format(datas);
-            case "Fri":
-                return resourceBundle.getString("piatek") + " " + FORMATTER.format(datas);
-            case "Sat":
-                return resourceBundle.getString("sobota") + " " + FORMATTER.format(datas);
-            case "Sun":
-                return resourceBundle.getString("niedziela") + " " + FORMATTER.format(datas);
-        }
-        return "brak";
-    }
-
     private void setVisibleButtonsAndDisableTextField() {
         weatherTool = new WeatherTool(citySet, resourceBundle);
         set.setVisible(false);
@@ -297,6 +277,7 @@ public class Weather implements Initializable {
             showForecastDataAndDescription(tomorrow1, tomorrowDescription1, dayAfter1, dayAfterDescription1, dayDayAfter1, dayDayAfterDescription1, dayDayDayAfter1, dayDayDayAfterDescription1);
             setImageFromMyLocation();
         }
+
     }
 
     private void setTemperatureDescriptionPressureAndCityInMainMyRegion() {
