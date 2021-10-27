@@ -64,10 +64,8 @@ public class WeatherManager {
             setApi(api);
             apiAdress = getApi();
             json = readJsonFromURL(apiAdress);
-        } catch (JSONException e) {
+        } catch (JSONException | IOException e) {
             unexpectErrors = true;
-            return;
-        } catch (IOException e) {
             return;
         }
 

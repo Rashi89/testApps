@@ -1,10 +1,11 @@
 package pl.agatarachanska.model;
 
-import org.hamcrest.MatcherAssert;
-import org.json.JSONObject;
+import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ResourceBundle;
 
 import static net.javacrumbs.jsonunit.JsonMatchers.jsonEquals;
@@ -12,18 +13,29 @@ import static net.javacrumbs.jsonunit.core.util.ResourceUtils.resource;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.spy;
 
 class WeatherManagerTest {
 
     @Test
-    void readJsonFileFromURL() throws IOException {
+    void newWeatherMenagerShouldSetCity() {
+        //given
+        ResourceBundle bundle = ResourceBundle.getBundle("bundles.message");
+        //when
+        WeatherManager weatherManager = new WeatherManager("Lublin", bundle);
+        //then
+        assertThat(weatherManager.getCity(), equalTo("Lublin"));
+    }
+
+    @Test
+    void readJsonFileFromURLIsCorrect() throws IOException {
         //given
         ResourceBundle bundle = ResourceBundle.getBundle("bundles.message");
         WeatherManager weatherManager = new WeatherManager("Lublin",bundle);
-        String url ="file:///D:/Programowanie/projekty_w_java/apkaPogodowaTesty3/src/test/resources/test.json";
+        File file = new File("src/test/resources/test.json");
+        String path = file.getAbsolutePath();
+        String url ="file:///"+path;
         //when
         //then
         assertThat(weatherManager.readJsonFromURL(url), jsonEquals(resource("test.json")));
@@ -46,7 +58,9 @@ class WeatherManagerTest {
         ResourceBundle bundle = ResourceBundle.getBundle("bundles.message");
         WeatherManager weatherManager = new WeatherManager("Lublin",bundle);
         WeatherManager weatherManagerSpy = spy(weatherManager);
-        String url ="file:///D:/Programowanie/projekty_w_java/apkaPogodowaTesty3/src/test/resources/data.json";
+        File file = new File("src/test/resources/data.json");
+        String path = file.getAbsolutePath();
+        String url ="file:///"+path;
         given(weatherManagerSpy.getApi()).willReturn(url);
         //when
         weatherManagerSpy.fetchDataWeather();
@@ -56,6 +70,20 @@ class WeatherManagerTest {
         assertThat(weatherManagerSpy.getDescription(),equalTo("zachmurzenie duże"));
         assertThat(weatherManagerSpy.getPressure(),equalTo("1022"));
 
+    }
+
+    @Test
+    void fetchDataWeatherShouldThrowException() {
+        //given
+        ResourceBundle bundle = ResourceBundle.getBundle("bundles.message");
+        WeatherManager weatherManager = new WeatherManager("Lublin",bundle);
+        WeatherManager weatherManagerSpy = spy(weatherManager);
+        String url = null;
+        given(weatherManagerSpy.getApi()).willReturn(url);
+        //when
+        weatherManagerSpy.fetchDataWeather();
+        //then
+        assertTrue(weatherManagerSpy.getUnexpectErrors());
     }
 
 }
